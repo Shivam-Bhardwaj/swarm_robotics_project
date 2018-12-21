@@ -3,10 +3,6 @@ import pybullet as p
 import numpy as np
 
 
-# from run_simulation import L,D,Df, Dt,p_current,p_prev,v_current,v_prev
-# from shared import *
-
-
 class Robot():
     """ 
     The class is the interface to a single robot
@@ -100,88 +96,9 @@ class Robot():
         # check if we received the position of our neighbors and compute desired change in position
         # as a function of the neighbors (message is composed of [neighbors id, position])
         # print(var.time)
-        '''
-        dx=0
-        dy=0
-        
-        if messages:
-            for m in messages:
-                dx += m[1][0] - pos[0]
-                dy += m[1][1] - pos[1]
-           
 
-            # compute velocity change for the wheels
-            vel_norm = np.linalg.norm([dx, dy])  # norm of desired velocity
-            if vel_norm < 0.01:
-                vel_norm = 0.01
-            des_theta = np.arctan2(dy / vel_norm, dx / vel_norm)
-            right_wheel = np.sin(des_theta - rot) * vel_norm + np.cos(des_theta - rot) * vel_norm
-            left_wheel = -np.sin(des_theta - rot) * vel_norm + np.cos(des_theta - rot) * vel_norm
-            self.set_wheel_velocity([left_wheel, right_wheel])
-
-        
-        
-        for m in messages:
-            var.update_p_current(m[1][0] - self.dt * var.v_prev[m[0], 0], m[0], 0)
-            var.update_p_current(m[1][1] - self.dt * var.v_prev[m[0], 1], m[0], 1)
-
-        # var.update_p_current(pos[0] + self.dt * var.v_prev[self.id, 0], self.id, 0)
-        # var.update_p_current(pos[1] + self.dt * var.v_prev[self.id, 1], self.id, 1)
-
-        var.update_Fx()
-        var.update_Fy()
-
-        dx = var.p_current[self.id, 0] - var.p_prev[self.id, 0]
-        dy = var.p_current[self.id, 1] - var.p_prev[self.id, 1]
-        # print(var.Fx[0])
-        # if self.id ==0:
-        #     print(var.p_current[self.id, 0])
-
-        # if self.id ==0:
-        #     print(var.v_prev[self.id, 0])
-        # print(dy)
-        # dx = var.p_prev[self.id, 0]
-        # dy = var.p_prev[self.id, 1]
-
-        # vel_norm = np.linalg.norm([dx, dy])  # norm of desired velocity
-        vel_norm = np.linalg.norm([dx, dy])
-
-        # if self.id == 0:
-        # print(self.id)
-
-        # var.update_v_current(var.v_prev[:,0] + self.dt * var.Fx)
-        # var.update_v_current(var.v_prev[:,1] + self.dt * var.Fy)
-        var.update_v_prev_x(var.v_prev[:, 0] + var.Fx * self.dt)
-        var.update_v_prev_y(var.v_prev[:, 1] + var.Fy * self.dt)
-
-        if vel_norm < 0.01:
-            vel_norm = 0.01
-        des_theta = np.arctan2(dy / vel_norm, dx / vel_norm)
-        right_wheel = np.sin(des_theta - rot) * vel_norm + np.cos(des_theta - rot) * vel_norm
-        left_wheel = -np.sin(des_theta - rot) * vel_norm + np.cos(des_theta - rot) * vel_norm
-        self.set_wheel_velocity([left_wheel, right_wheel])
-
-        var.update_p_prev_w(var.p_current)
-        '''
-
-        # print(self.state)
-        # self.state[self.id][0] = self.id
-        # self.state[self.id][1] = pos[0]
-        # self.state[self.id][2] = pos[1]
-        # # print(messages)
-        # if messages:
-        #     for m in messages:
-        #         if self.id != m[0]:
-        #             self.state[m[0]][0] = m[0]
-        #             self.state[m[0]][1] = m[1][0]
-        #             self.state[m[0]][2] = m[1][1]
-
-        # print(self.state)
         dx = 0
         dy = 0
-        # var.update_pos(self.state[:, 1:3])
-        x_comp = 0
-        y_comp = 0
 
         if (var.time > 10) & (var.time < 20):
             self.update_p([[2.5, -0.5], [2.5, 2.5], [2.5, -1.5], [2.5, 1.5], [2.5, 0.5], [2.5, 3.5]])
@@ -192,24 +109,25 @@ class Robot():
 
         elif (var.time > 29) & (var.time < 36):
             self.update_p([[0.5, 5.5], [1.5, 5.5], [2.5, 5.5], [3.5, 5.5], [4.5, 5.5], [5.5, 5.5]])
-        #
-        # elif (Robot.index == 2):
-        #     p_des = [[2.5, 3.5], [2.5, 6.5], [2.5, 2.5], [2.5, 5.5], [2.5, 4.5], [2.5, 7.5]]
-        #
-        # elif (Robot.index == 3):
-        #     p_des = [[0.5, 5.5], [1.5, 5.5], [2.5, 5.5], [3.5, 5.5], [4.5, 5.5], [5.5, 5.5]]
-        #
-        # elif (Robot.index == 4):
-        #     p_des = [[-3.5, 5.5], [-2.5, 5.5], [-1.5, 5.5], [-0.5, 5.5], [0.5, 5.5], [1.5, 5.5]]
-        #
-        # elif (Robot.index == 5):
-        #     p_des = [[-7.5, 5.5], [-6.5, 5.5], [-5.5, 5.5], [-4.5, 5.5], [-3.5, 5.5], [-2.5, 5.5]]
-        #
-        # elif (Robot.index == 6):
-        #     p_des = [[-5, 4.5], [-5.5, 5], [-5, 6.5], [-6, 5.5], [-5, 5.5], [-5.5, 6]]
-        #
-        # elif (Robot.index == 7):
-        #     p_des = [[-3.5, 9.5], [-4.5, 10], [-3.5, 11.5], [-5.5, 10.5], [-3.5, 10.5], [-4.5, 11]]
+
+        elif (var.time > 36) & (var.time < 46):
+            self.update_p([[2.5, 3.5], [2.5, 6.5], [2.5, 2.5], [2.5, 5.5], [2.5, 4.5], [2.5, 7.5]])
+
+        elif (var.time > 46) & (var.time < 56):
+            self.update_p([[0.5, 5.5], [1.5, 5.5], [2.5, 5.5], [3.5, 5.5], [4.5, 5.5], [5.5, 5.5]])
+
+        elif (var.time > 56) & (var.time < 66):
+            self.update_p([[-3.5, 5.5], [-2.5, 5.5], [-1.5, 5.5], [-0.5, 5.5], [0.5, 5.5], [1.5, 5.5]])
+
+        elif (var.time > 66) & (var.time < 77):
+            self.update_p([[-7.5, 5.5], [-6.5, 5.5], [-5.5, 5.5], [-4.5, 5.5], [-3.5, 5.5], [-2.5, 5.5]])
+
+        elif (var.time > 77) & (var.time < 87):
+            self.update_p([[-5, 4.5], [-5.5, 5], [-5, 6.5], [-6, 5.5], [-5, 5.5], [-5.5, 6]])
+
+        elif (var.time > 87) & (var.time < 97):
+            self.update_p([[-3.5, 9.5], [-4.5, 10], [-3.5, 11.5], [-5.5, 10.5], [-3.5, 10.5], [-4.5, 11]])
+
         print(self.p)
         if messages:
             for m in messages:
@@ -219,11 +137,6 @@ class Robot():
             x_comp = np.minimum((self.p[self.id][0] - pos[0]), 1)
             y_comp = np.minimum((self.p[self.id][1] - pos[1]), 1)
 
-            # dx = self.dt * var.vel[self.id][0] * 1000
-            # dy = self.dt * var.vel[self.id][1] * 1000
-            # print(self.state)
-            # var.update_Fx()
-            # var.update_Fy()
             dx += 10 * x_comp
             dy += 10 * y_comp
 
@@ -234,9 +147,3 @@ class Robot():
             right_wheel = np.sin(des_theta - rot) * vel_norm + np.cos(des_theta - rot) * vel_norm
             left_wheel = -np.sin(des_theta - rot) * vel_norm + np.cos(des_theta - rot) * vel_norm
             self.set_wheel_velocity([left_wheel, right_wheel])
-            print(var.time)
-            # force = np.zeros((6, 2))
-            # force[:, 0] = var.Fx
-            # force[:, 1] = var.Fy
-            #
-            # var.update_vel(var.vel + self.dt * force)
