@@ -96,10 +96,10 @@ class Robot:
         dx = 0
         dy = 0
 
-        if (var.time > 7) & (var.time < 9):  # L shape
+        if (var.time > 10) & (var.time < 15):  # L shape
             self.update_p(([[0.65, -1], [2.65, 1], [1.65, -1], [2.65, 0], [2, -0.5], [2.65, 2]]))
 
-        elif (var.time > 9) & (var.time < 35):  # move up
+        elif (var.time > 15) & (var.time < 35):  # move up
             var.update_kf(10)
             self.update_p([[2.5, 4.5], [2.5, 7.5], [2.5, 3.5], [2.5, 6.5], [2.5, 5.5], [2.5, 8.5]])
 
