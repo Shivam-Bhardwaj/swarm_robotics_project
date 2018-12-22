@@ -5,12 +5,10 @@ import numpy as np
 
 from robot import Robot
 
-
-# from run_simulation import L,D,Df, Dt,p_current,p_prev,v_current,v_prev
 # from shared import *
 
 
-class World():
+class World:
     def __init__(self, var):
         # create the physics simulator
         self.physicsClient = p.connect(p.GUI)
@@ -28,7 +26,7 @@ class World():
 
         self.goalId = p.loadURDF("../models/goal.urdf")
 
-        p.resetDebugVisualizerCamera(6.0, 0.0, -89.0, (1., 1., 0.0))
+        p.resetDebugVisualizerCamera(10.0, 0.0, -89.0, (1., 5., 0.0))
 
         # Add objects
         wallId = p.loadSDF("../models/walls.sdf")[0]
@@ -109,9 +107,9 @@ class World():
             pos1, or1 = r.get_pos_and_orientation()
 
             for j, r2 in enumerate(self.robots):
-                if (r.id != r2.id):
+                if r.id != r2.id:
                     pos2, or2 = r2.get_pos_and_orientation()
-                    if (np.linalg.norm(pos1 - pos2) < self.max_communication_distance):
+                    if np.linalg.norm(pos1 - pos2) < self.max_communication_distance:
                         r.neighbors.append(j)
 
         # for each robot send and receive messages

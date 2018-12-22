@@ -10,9 +10,6 @@ from swarm_simulation import World
 var = Shared()
 world = World(var)
 
-t = 0.
-counter = 0
-
 # starts a simulation
 while True:
     world.stepSimulation()

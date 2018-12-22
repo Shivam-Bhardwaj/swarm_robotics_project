@@ -3,7 +3,7 @@ import pybullet as p
 import numpy as np
 
 
-class Robot():
+class Robot:
     """ 
     The class is the interface to a single robot
     """
@@ -14,6 +14,7 @@ class Robot():
         self.pybullet_id = p.loadSDF("../models/robot.sdf")[0]
         self.joint_ids = list(range(p.getNumJoints(self.pybullet_id)))
         self.initial_position = init_pos
+
         self.reset()
 
         # No friction between body and surface.
@@ -27,9 +28,7 @@ class Robot():
         self.messages_to_send = []
         self.neighbors = []
         self.state = np.zeros((6, 3))
-        self.p = [[0.5, -1], [2.5, 1], [1.5, -1], [2.5, 0], [2.5, -1], [2.5, 2]]
-
-        # self.p2 = [[2.5, -0.5], [2.5, 2.5], [2.5, -1.5], [2.5, 1.5], [2.5, 0.5], [2.5, 3.5]]
+        self.p = [[0.5, -1], [0.5, 1], [1.5, -1], [1.5, 1], [2.5, -1], [2.5, 1]]  # square
 
     def update_p(self, p):
         self.p = p
@@ -100,35 +99,42 @@ class Robot():
         dx = 0
         dy = 0
 
-        if (var.time > 10) & (var.time < 20):
-            self.update_p([[2.5, -0.5], [2.5, 2.5], [2.5, -1.5], [2.5, 1.5], [2.5, 0.5], [2.5, 3.5]])
+        if (var.time > 7) & (var.time < 9):  # L shape
+            self.update_p(([[0.65, -1], [2.65, 1], [1.65, -1], [2.65, 0], [2, -0.5], [2.65, 2]]))
 
-        elif (var.time > 20) & (var.time < 29):
-            self.update_p([[2.5, 3.5], [2.5, 6.5], [2.5, 2.5], [2.5, 5.5], [2.5, 4.5], [2.5, 7.5]])
-            # [[0.5, -1], [2.5, 1], [1.5, -1], [2.5, 0], [2.5, -1], [2.5, 2]]
+        elif (var.time > 9) & (var.time < 35):  # move up
+            var.update_kf(10)
+            self.update_p([[2.5, 4.5], [2.5, 7.5], [2.5, 3.5], [2.5, 6.5], [2.5, 5.5], [2.5, 8.5]])
 
-        elif (var.time > 29) & (var.time < 36):
+        elif (var.time > 35) & (var.time < 44):  # Horizontal line
+            var.update_kf(7)
             self.update_p([[0.5, 5.5], [1.5, 5.5], [2.5, 5.5], [3.5, 5.5], [4.5, 5.5], [5.5, 5.5]])
 
-        elif (var.time > 36) & (var.time < 46):
-            self.update_p([[2.5, 3.5], [2.5, 6.5], [2.5, 2.5], [2.5, 5.5], [2.5, 4.5], [2.5, 7.5]])
-
-        elif (var.time > 46) & (var.time < 56):
-            self.update_p([[0.5, 5.5], [1.5, 5.5], [2.5, 5.5], [3.5, 5.5], [4.5, 5.5], [5.5, 5.5]])
-
-        elif (var.time > 56) & (var.time < 66):
+        elif (var.time > 44) & (var.time < 50):  # Move forward in line
+            var.update_kf(7)
             self.update_p([[-3.5, 5.5], [-2.5, 5.5], [-1.5, 5.5], [-0.5, 5.5], [0.5, 5.5], [1.5, 5.5]])
 
-        elif (var.time > 66) & (var.time < 77):
+        elif (var.time > 50) & (var.time < 60):  # Move forward in line
+            var.update_kf(7)
             self.update_p([[-7.5, 5.5], [-6.5, 5.5], [-5.5, 5.5], [-4.5, 5.5], [-3.5, 5.5], [-2.5, 5.5]])
 
-        elif (var.time > 77) & (var.time < 87):
-            self.update_p([[-5, 4.5], [-5.5, 5], [-5, 6.5], [-6, 5.5], [-5, 5.5], [-5.5, 6]])
+        elif (var.time > 60) & (var.time < 70):  # Make square
+            var.update_kf(9)
+            self.update_p([[-6, 5], [-6, 7], [-5, 5], [-5, 7], [-4, 5], [-4, 7]])
 
-        elif (var.time > 87) & (var.time < 97):
-            self.update_p([[-3.5, 9.5], [-4.5, 10], [-3.5, 11.5], [-5.5, 10.5], [-3.5, 10.5], [-4.5, 11]])
+        elif (var.time > 70) & (var.time < 75):  # Move Square
+            var.update_kf(9)
+            self.update_p([[-5.5, 9.5], [-5.5, 11.5], [-4.5, 9.5], [-4.5, 11.5], [-3.5, 9.5], [-3.5, 11.5]])
 
-        print(self.p)
+        elif (var.time > 70) & (var.time < 75):  # Make triangle position
+            var.update_kf(9)
+            self.update_p([[-5.2, 10.5], [-4.6, 11], [-4.6, 10], [-4, 11.2], [-4, 9.7], [-4, 10.5]])
+
+        elif (var.time > 75) & (var.time < 85):  # Make triangle more rigid
+            var.update_kf(15)
+            self.update_p([[-5.3, 10.5], [-4.6, 11], [-4.6, 10], [-4, 11.2], [-4, 9.7], [-4, 10.5]])
+
+        print(var.time)
         if messages:
             for m in messages:
                 dx += 5 * (m[1][0] - pos[0] - self.p[m[0]][0] + self.p[self.id][0])
@@ -137,8 +143,8 @@ class Robot():
             x_comp = np.minimum((self.p[self.id][0] - pos[0]), 1)
             y_comp = np.minimum((self.p[self.id][1] - pos[1]), 1)
 
-            dx += 10 * x_comp
-            dy += 10 * y_comp
+            dx += var.kf * x_comp
+            dy += var.kf * y_comp
 
             vel_norm = np.linalg.norm([dx, dy])
             if vel_norm < 0.01:
