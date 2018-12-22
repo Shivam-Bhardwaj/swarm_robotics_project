@@ -1,3 +1,5 @@
+# Class for shared variables
+
 class Shared:
 
     def __init__(self):

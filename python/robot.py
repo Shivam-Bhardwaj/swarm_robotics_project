@@ -92,9 +92,6 @@ class Robot:
         # send message of positions to all neighbors indicating our position
         for n in neig:
             self.send_message(n, pos)
-        # check if we received the position of our neighbors and compute desired change in position
-        # as a function of the neighbors (message is composed of [neighbors id, position])
-        # print(var.time)
 
         dx = 0
         dy = 0
@@ -134,7 +131,7 @@ class Robot:
             var.update_kf(15)
             self.update_p([[-5.3, 10.5], [-4.6, 11], [-4.6, 10], [-4, 11.2], [-4, 9.7], [-4, 10.5]])
 
-        print(var.time)
+        # The control
         if messages:
             for m in messages:
                 dx += 5 * (m[1][0] - pos[0] - self.p[m[0]][0] + self.p[self.id][0])
